@@ -108,6 +108,26 @@ public class OpenStack4jClient {
 				.getId());
 	}
 
+	public Stack createStack(String stackName, String fullName,
+			String tags,
+			Map<String, String> params, String fullEnvFile, long timeout) {
+
+		StackCreateBuilder builder = Builders.stack().name(stackName)
+				.tags(tags)
+				.parameters(params).templateFromFile(fullName)
+				.disableRollback(false).timeoutMins((long) timeout);
+
+		if (!Strings.isNullOrEmpty(fullEnvFile)) {
+			builder.environmentFromFile(fullEnvFile);
+		}
+
+		HeatStackCreate stack = (HeatStackCreate) builder.build();
+
+		return getDetails(stackName, this.heatService.stacks().create(stack)
+				.getId());
+	}
+	
+	
 	public Stack getStackByName(String stackName) {
 		return this.heatService.stacks().getStackByName(stackName);
 	}

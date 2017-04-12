@@ -43,9 +43,15 @@ public class BundleMapperUtils {
 		// Properties globals
 		Bundle bundle = new Bundle(json.getString(Constants.HOTNAME),
 				json.getString(Constants.NAME),
+				json.getString(Constants.TAGS),
+				json.getBoolean(Constants.TAG),
 				json.getBoolean(Constants.EXIST),
 				json.getBoolean(Constants.DEBUG));
 
+		bundle.setTags(json.getString(Constants.TAGS));
+		bundle.setTag(json.getBoolean(Constants.TAG));
+		
+		
 		// Parameters
 		Map<String, Parameter> params = new TreeMap<String, Parameter>();
 		Map<String, Object> parameters = json

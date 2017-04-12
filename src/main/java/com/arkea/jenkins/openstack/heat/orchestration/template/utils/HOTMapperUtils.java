@@ -58,6 +58,9 @@ public class HOTMapperUtils {
 			if (hot.contains(Constants.OUTPUTS)) {
 				stack.setOutputs(getOutputs(hotObjects));
 			}
+			if (hot.contains(Constants.TAGS)){
+				stack.setTags(getTags(hotObjects));
+			}
 		}
 
 		return stack;
@@ -83,6 +86,22 @@ public class HOTMapperUtils {
 		}
 		return params;
 	}
+	
+	/**
+	 * Transform parameters from HOT to parameters in JAVA
+	 * 
+	 * @param hotObjects
+	 *            the objects parameters content in the HOT
+	 * @return the list of parameters
+	 */
+	@SuppressWarnings("unchecked")
+	private static String getTags(Map<String, Object> hotObjects){	
+		return (String)hotObjects.get(Constants.TAGS);
+	}	
+	
+	
+	
+	
 
 	/**
 	 * Create Paramater in JAVA
