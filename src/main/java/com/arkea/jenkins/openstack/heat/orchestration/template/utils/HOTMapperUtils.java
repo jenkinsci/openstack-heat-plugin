@@ -45,7 +45,7 @@ public class HOTMapperUtils {
 	@SuppressWarnings("unchecked")
 	public static Bundle getBundleFromHOT(String hotName, String hot) {
 
-		Bundle stack = new Bundle(hotName, "", false, false);
+		Bundle stack = new Bundle(hotName, "","",false, false, false);
 
 		// Find paramaters or outputs in HOT
 		if (hot.contains(Constants.PARAMETERS)

@@ -34,7 +34,7 @@ public class DeleteCreateTest extends AbstractStackTest {
 		assertEquals(
 				true,
 				testPerform("deleteCreateDebug", "delete_create_complete",
-						Result.SUCCESS, true, true,
+						null,false,Result.SUCCESS, true, true,
 						Arrays.asList("instance_ip", "192.168.1.19"),
 						"delete_create_complete.json"));
 	}

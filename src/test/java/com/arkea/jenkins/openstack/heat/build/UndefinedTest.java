@@ -32,7 +32,7 @@ public class UndefinedTest extends AbstractStackTest {
 	public void testUndefined() {
 		assertEquals(
 				true,
-				testPerform("createUndefined", "undefined", Result.FAILURE,
+				testPerform("createUndefined", "undefined",null,false, Result.FAILURE,
 						false, true, Arrays.asList("UNDEFINED"),
 						"undefined.json"));
 	}

@@ -51,7 +51,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class AbstractStackTest extends AbstractTest {
 
 	protected boolean testPerform(String taskName,
-			String stackName, Result result, boolean delete,
+			String stackName, String tags, boolean if_tag,Result result, boolean delete,
 			boolean debug, List<String> testLogDebug,
 			String jsonFileTest) {
 
@@ -71,7 +71,7 @@ public abstract class AbstractStackTest extends AbstractTest {
 					});
 
 			// Create the bundle to test
-			Bundle bundle = new Bundle("demo-template.yaml", stackName, delete,
+			Bundle bundle = new Bundle("demo-template.yaml", stackName, tags, if_tag, delete,
 					debug);
 			Map<String, Parameter> params = new HashMap<String, Parameter>();
 			params.put("NetID", new Parameter("NetID", Type.String, "", "", "",
@@ -120,7 +120,7 @@ public abstract class AbstractStackTest extends AbstractTest {
 					}
 				}
 			}
-
+			
 			if (result.equals(build.getResult())) {
 				return true;
 			}

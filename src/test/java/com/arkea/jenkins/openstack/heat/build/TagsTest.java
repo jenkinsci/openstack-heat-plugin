@@ -1,12 +1,14 @@
 package com.arkea.jenkins.openstack.heat.build;
 
-import hudson.model.Result;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
-import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.arkea.jenkins.openstack.heat.orchestration.template.Bundle;
+
+import hudson.model.Result;
 /**
  * @author Credit Mutuel Arkea
  * 
@@ -26,14 +28,16 @@ import org.junit.Test;
  *         limitations under the License.
  * 
  */
-public class CreateFailedTest extends AbstractStackTest {
+public class TagsTest extends AbstractStackTest {
 
 	@Test
-	public void testCreateFailed() {
+	public void testCreateDebug() {
 		assertEquals(
 				true,
-				testPerform("createCreateFailed", "create_failed",null,false,
-						Result.FAILURE, false, true,
-						Arrays.asList("CREATE_FAILED"), "create_failed.json"));
+				testPerform("createDebug", "create_complete","test",true,Result.SUCCESS,
+						false, true, Arrays.asList("instance_ip", "192.168.1.19"),
+						"create_tags.json"));
 	}
+
 }
+
