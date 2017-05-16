@@ -39,6 +39,7 @@ public class Bundle {
 	private Map<String, Parameter> parameters = new TreeMap<String, Parameter>();
 	private Map<String, Output> outputs = new TreeMap<String, Output>();
 	private String envName;
+	private String envStackName;
 
 	public Bundle(String hotName, String name, boolean exist, boolean debug) {
 		this.hotName = hotName;
@@ -130,5 +131,13 @@ public class Bundle {
 			return rtn.toString();
 		}
 		return String.valueOf(value);
+	}
+
+	public String getenvStackName() {
+		return envStackName;
+	}
+
+	public void setEnvStackName(String envStackName) {
+		this.envStackName = envStackName;
 	}
 }

@@ -105,7 +105,7 @@ public abstract class AbstractStackTest extends AbstractTest {
 							.getTimeoutProcessInMin())).thenAnswer(answerStack);
 
 			// Create task HotPlayer
-			HOTPlayer hotPlayer = new HOTPlayer("projectTest", bundle,
+			HOTPlayer hotPlayer = new HOTPlayer("projectTest", bundle.getHotName(), "", bundle.getName(), true, true,
 					clientOS);
 			project.getBuildersList().add(hotPlayer);
 			project.save();

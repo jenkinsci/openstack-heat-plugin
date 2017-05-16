@@ -23,88 +23,40 @@
 	<j:set var="UID" value="${h.generateId()}"/>
 	<script type="text/javascript">
 		
-		var hp =  <st:bind value="${descriptor}"/>
-		
 		function getBundle${UID}() {
 			var selHot = document.getElementById('selectHotName${UID}');
 			if(selHot.selectedIndex == 0) {
-				document.getElementById('div_bundle${UID}').innerHTML='';
-				setEnvFile${UID}("");
+				document.getElementById('envContent${UID}').innerHTML='';
 			} else {
 				var hotName = selHot.options[selHot.selectedIndex].value;
-				hp.getBundle(hotName, function(t) {
-					var bundle = t.responseObject();
-					if(bundle == null) {
+				var hp =  <st:bind value="${descriptor}"/>
+
+				hp.getParameters(hotName, function(t) {
+					var params = t.responseObject();
+					if(params == null) {
 						alert('${%HOTPlayer.body.empty}');
 					} else {
-						document.getElementById('bundle${UID}').value=JSON.stringify(bundle);
-						generateBundle(document.getElementById('div_bundle${UID}'), bundle, '${UID}');
-						setEnvFile${UID}(hotName);
-						getEnvFile${UID}(true);
+						document.getElementById('envContent${UID}').value=params;
 					}
 				});
 			}
 		}
-		
-		function getEnvFile${UID}(onchange) {
-			if(document.getElementById('selectEnvName${UID}') != undefined) {
-				var selEnv = document.getElementById('selectEnvName${UID}');
-				if(document.getElementById('selectHotName${UID}').selectedIndex == 0) {
-					selEnv.selectedIndex=0;
-					alert('${%HOTPlayer.hot.select}');
-				}
-				if(selEnv.selectedIndex == 0) {
-					updateToolTip('tooltip${UID}', 'Choose an env file...');
-				} else {
-					hp.getEnv(selEnv.options[selEnv.selectedIndex].value, function(t) {
-						var contents = t.responseObject();
-						updateToolTip('tooltip${UID}', generateEnv(contents));
-						if(onchange != undefined &amp;&amp; onchange==true) {
-							updateParametersInBundle('${UID}', contents);
-							generateBundle(document.getElementById('div_bundle${UID}'), JSON.parse(document.getElementById('bundle${UID}').value), '${UID}');
-						}
-					});
-				} 
-			}
-		}
-		
-		function setEnvFile${UID}(name) {
-			if(document.getElementById('selectEnvName${UID}') != undefined) {
-				var selEnv = document.getElementById('selectEnvName${UID}');
-				var selected = -1;
-				for(var i=0; i &lt; selEnv.length; i++) {
-					if(selEnv.options[i].value == name) {
-						selected = i;
-						break;
-					} else if(selEnv.options[i].value == '${descriptor.defaultEnvFileName}') {
-						selected = i;
-					}
-				}
-				if(selected != -1) {
-					selEnv.selectedIndex=selected;
-				} else {
-					selEnv.selectedIndex=0;
-				}
-			}
-		}
 	</script>
-	<f:invisibleEntry>
-        <f:textbox field="bundle" id="bundle${UID}" />
-    </f:invisibleEntry>
+
 	<j:set var="projects" value="${descriptor.projects}"/>
     <j:choose>
     	<j:when test="${size(projects) == 1}">
     		<f:invisibleEntry>
-    			<f:textbox field="project" value="${projects.get(0).getProject()}" />
+				<f:textbox field="project" value="${projects.get(0).getProject()}" />
     		</f:invisibleEntry>
     	</j:when>
     	<j:otherwise>
-    		<j:set var="project" value="${instance.indexProject}"/>
-    		<f:entry name="Project" title="${%HOTPlayer.project.title}" field="project">
-    			<select class="setting-input" name="project">
+			<j:set var="project" value="${instance.indexProject}"/>
+    		<f:entry name="Project" title="${%HOTPlayer.project.title}" field="project" >
+				<select class="setting-input" name="project">
     				<j:forEach var="item" items="${descriptor.projects}">
 						<f:option selected="${item.project == project}">${item.project}</f:option>
-            		</j:forEach>
+					</j:forEach>
     			</select>
     		</f:entry>
     	</j:otherwise>
@@ -124,40 +76,17 @@
 		    	</select>
 		 	</j:otherwise>
     	</j:choose>
-    	<j:if test="${!empty(descriptor.EnvItems)}">
-			<j:set var="selectedEnv" value="${instance.envName}"/>
-			<f:block>
-		  		<f:entry title="${%HOTPlayer.env.title}">
-		  			<table width="100%">
-		  				<tr>
-		  					<td>
-		  						<select class="setting-input" name="envName" id="selectEnvName${UID}" onchange="getEnvFile${UID}(true)">
-									<f:option selected="true">${%HOTPlayer.select.env}</f:option>
-									<j:forEach var="item" items="${descriptor.EnvItems}">
-										<f:option selected="${item == selectedEnv}">${item}</f:option>
-					           		</j:forEach>
-					   			</select>
-							</td>
-					    	<td>
-					    		<div id="tooltip${UID}" tooltip="${%HOTPlayer.tooltip}"><img  src="/jenkins/static/87ca95ca/images/16x16/help.png" style="width: 16px; height: 16px; " class="icon-help icon-sm"></img></div>
-					    	</td>
-					    </tr>
-					</table>
-			    </f:entry>
-		 	</f:block>
- 	 	</j:if>
-	 	<f:block>
-  			<div id="div_bundle${UID}"></div>
- 		</f:block>
-	 	<j:if test="${selectedHot != null}">
-			<script type="text/javascript">
-				generateBundle(document.getElementById('div_bundle${UID}'), ${instance.bundle}, '${UID}');
-			</script>
-		</j:if>
-		<j:if test="${selectedEnv != null}">
-			<script type="text/javascript">
-				getEnvFile${UID}(false);
-			</script>
-		</j:if>
-	 </f:entry>
+	</f:entry>
+	<f:entry title="${%HOTPlayer.env.title}">
+		<f:textarea name="envContent" value="${instance.envContent}" id="envContent${UID}" />
+	</f:entry>
+	<f:entry title="${%HOTPlayer.env.stack.name}">
+		<f:textbox name="envStackName" value="${instance.envStackName}" />
+	</f:entry>
+	<f:block>
+		<f:checkbox title="${%HOTPlayer.delete.exist}" name="deleteExist" checked="${instance.deleteExist}" />
+	</f:block>
+	<f:block>
+		<f:checkbox title="${%HOTPlayer.debug}" name="debug" checked="${instance.debug}" />
+	</f:block>
  </j:jelly>

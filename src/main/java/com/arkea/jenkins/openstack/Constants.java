@@ -62,7 +62,10 @@ public class Constants {
 	public final static String URL_HOT = "urlHot";
 	public final static String OUTPUT_KEY = "output_key";
 	public final static String OUTPUT_VALUE = "output_value";
-	public final static String ENV_NAME = "envName";
 	public final static String STARTED = "started";
-
+	public final static String BUILDER = "builder";
+	public final static String ENV_CONTENT = "envContent";
+	public final static String STACKNAME = "stackName";
+	public final static String DEL_EXIST = "deleteExist";
+	public static final String ENV_STACKNAME = "envStackName";
 }

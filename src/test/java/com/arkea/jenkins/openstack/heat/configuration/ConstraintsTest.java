@@ -43,8 +43,8 @@ public class ConstraintsTest extends AbstractTest {
 		String hotName = "parameters-template.yaml";
 		String body = ((HOTPlayerSettings) Jenkins.getInstance().getDescriptor(
 				HOTPlayerSettings.class)).getLoader().getHot(hotName);
-		JSONObject json = JSONObject.fromObject(HOTMapperUtils
-				.getBundleFromHOT(hotName, body));
+																																																																																																																		JSONObject json = JSONObject.fromObject(HOTMapperUtils
+				.getBundleFromHOT("stack1", "$STACK1", hotName, "", body));
 		Bundle bundle = BundleMapperUtils.getBundleFromJson(json.toString());
 
 		// testString contraints

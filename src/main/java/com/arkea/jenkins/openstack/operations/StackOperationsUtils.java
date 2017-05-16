@@ -112,6 +112,7 @@ public class StackOperationsUtils {
 
 		boolean rtn = true;
 		String bundleName = eVU.getVar(bundle.getName());
+
 		try {
 			cLog.logInfo(Messages.stack_start(bundleName,
 					projectOS.getProject()));
@@ -163,6 +164,8 @@ public class StackOperationsUtils {
 				// If the status is complete, push the value of the outputs in
 				// the context if necessary
 				eVU.setVars(bundle.getOutputs(), outputs);
+				// Set stackname to env
+				eVU.setEnv(bundle.getenvStackName(), bundle.getName());
 
 			} else {
 				rtn = false;

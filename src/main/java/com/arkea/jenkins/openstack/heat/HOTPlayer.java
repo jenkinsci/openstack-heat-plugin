@@ -13,6 +13,7 @@ import java.util.List;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -24,11 +25,7 @@ import com.arkea.jenkins.openstack.client.OpenStack4jClient;
 import com.arkea.jenkins.openstack.exception.utils.ExceptionUtils;
 import com.arkea.jenkins.openstack.heat.configuration.ProjectOS;
 import com.arkea.jenkins.openstack.heat.i18n.Messages;
-import com.arkea.jenkins.openstack.heat.orchestration.template.Bundle;
-import com.arkea.jenkins.openstack.heat.orchestration.template.utils.BundleMapperUtils;
-import com.arkea.jenkins.openstack.heat.orchestration.template.utils.EnvMapperUtils;
 import com.arkea.jenkins.openstack.heat.orchestration.template.utils.HOTMapperUtils;
-import com.arkea.jenkins.openstack.heat.orchestration.template.utils.ParameterUtils;
 import com.arkea.jenkins.openstack.log.ConsoleLogger;
 import com.arkea.jenkins.openstack.operations.EnvVarsUtils;
 import com.arkea.jenkins.openstack.operations.StackOperationsUtils;
@@ -58,25 +55,32 @@ import com.google.inject.Inject;
  */
 public class HOTPlayer extends Builder {
 
-	private String hotName;
-	private String envName;
-	private Bundle bundle;
 	private String project;
+	private String hotName;
+	private String envContent;
+	private String envStackName;
+	private boolean deleteExist;
+	private boolean debug;
 	private OpenStack4jClient clientOS;
 
 	@DataBoundConstructor
-	public HOTPlayer(String project, Bundle bundle) {
+	public HOTPlayer(String project, String hotName, String envContent, String envStackName, boolean deleteExist, boolean debug) {
 		this.project = project;
-		this.hotName = bundle.getHotName();
-		this.envName = bundle.getEnvName();
-		this.bundle = bundle;
+		this.hotName = hotName;
+		this.envContent = envContent;
+		this.envStackName = envStackName;
+		this.deleteExist = deleteExist;
+		this.debug = debug;
 	}
 
-	public HOTPlayer(String project, Bundle bundle, OpenStack4jClient clientOS) {
+	public HOTPlayer(String project, String hotName, String envContent, String envStackName, boolean deleteExist,
+			 boolean debug, OpenStack4jClient clientOS) {
 		this.project = project;
-		this.hotName = bundle.getHotName();
-		this.envName = bundle.getEnvName();
-		this.bundle = bundle;
+		this.hotName = hotName;
+		this.envContent = envContent;
+		this.envStackName = envStackName;
+		this.deleteExist = deleteExist;
+		this.debug = debug;
 		this.clientOS = clientOS;
 	}
 
@@ -85,33 +89,41 @@ public class HOTPlayer extends Builder {
 		return (DescriptorImpl) super.getDescriptor();
 	}
 
-	public String getHotName() {
-		return hotName;
-	}
-
-	public String getEnvName() {
-		return envName;
-	}
-
-	/**
-	 * @return the bundle in JSON Format, it's easier to the render JavaScript
-	 */
-	public JSONObject getBundle() {
-		return JSONObject.fromObject(this.bundle);
-	}
-
 	public String getProject() {
 		return project;
 	}
 
+	public String getHotName() {
+		return hotName;
+	}
+
+	public String getEnvContent() {
+		return envContent;
+	}
+
+	public String getEnvStackName() {
+		return  envStackName;
+	}
+
+	public boolean isDeleteExist() {
+		return deleteExist;
+	}
+
+	public boolean isDebug() {
+		return debug;
+	}
+
+	private String getUniStackName() {
+		return "stack_" + DigestUtils.sha1Hex(this.toString());
+	}
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean perform(AbstractBuild build, Launcher launcher,
 			BuildListener listener) {
-
+		final String stackName = getUniStackName();
 		// Specific logger with color
 		ConsoleLogger cLog = new ConsoleLogger(listener.getLogger(),
-				"HOT Player", bundle.isDebug());
+				"HOT Player", debug);
 		try {
 
 			// Variable in context
@@ -131,24 +143,25 @@ public class HOTPlayer extends Builder {
 
 			// Test if the project is found
 			if (projectOS != null) {
-
 				// Client OpenStack inject during test or client failed
 				if (clientOS == null || !clientOS.isConnectionOK()) {
 					clientOS = new OpenStack4jClient(projectOS);
 				}
 
 				// Delete stack if it exists ?
-				if (this.bundle.isExist()) {
+				if (this.deleteExist) {
 					if (!StackOperationsUtils.deleteStack(
-							eVU.getVar(bundle.getName()), clientOS, cLog,
+							stackName, clientOS, cLog,
 							hPS.getTimersOS())) {
 						return false;
 					}
 				}
 
 				// Create stack
-				if (!StackOperationsUtils.createStack(eVU, bundle, projectOS,
-						clientOS, cLog, hPS.getTimersOS())) {
+				if (!StackOperationsUtils.createStack(eVU,
+					HOTMapperUtils.getBundleFromHOT(
+							stackName, envStackName, hotName, envContent, hPS.getLoader().getHot(hotName)),
+						projectOS, clientOS, cLog, hPS.getTimersOS())) {
 					return false;
 				}
 			} else {
@@ -157,7 +170,7 @@ public class HOTPlayer extends Builder {
 			}
 
 		} catch (Exception e) {
-			cLog.logError(Messages.processing_failed(bundle.getName())
+			cLog.logError(Messages.processing_failed(stackName)
 					+ ExceptionUtils.getStackTrace(e));
 			return false;
 		}
@@ -228,47 +241,26 @@ public class HOTPlayer extends Builder {
 		 * @return the bundle with the informations in JSONObject format
 		 */
 		@JavaScriptMethod
-		public JSONObject getBundle(String hotName) {
+		public String getParameters(String hotName) {
 			String body = hotPlayerSettings.getLoader().getHot(hotName);
 			if (Strings.isNullOrEmpty(body)) {
 				return null;
 			} else {
-				return JSONObject.fromObject(HOTMapperUtils.getBundleFromHOT(
-						hotName, body));
+				return HOTMapperUtils.getParameters(body);
 			}
 		}
 
-		/**
-		 * Method to interact between the server and the javascript code
-		 * 
-		 * @param envName
-		 *            envName selected
-		 * @return the json contents of the envFile
-		 */
-		@JavaScriptMethod
-		public JSONObject getEnv(String envName) {
-			return JSONObject.fromObject(EnvMapperUtils
-					.getEnv(hotPlayerSettings.getLoader().getEnv(envName)));
-		}
 
 		@Override
 		public HOTPlayer newInstance(StaplerRequest req, JSONObject formData)
 				throws hudson.model.Descriptor.FormException {
-			// Creation and transformation from JSON to Object JAVA
-			String data = formData.getString(Constants.BUNDLE);
-			if (Strings.isNullOrEmpty(data)) {
-				throw new FormException(
-						Messages.bundle_configurationException(),
-						"ConfigurationException");
-			}
-			Bundle bundle = BundleMapperUtils.getBundleFromJson(data);
-			if (!bundle.getParameters().isEmpty()) {
-				ParameterUtils.checkContraints(bundle.getParameters());
-			}
-			if (!Strings.isNullOrEmpty(formData.getString(Constants.ENV_NAME))) {
-				bundle.setEnvName(formData.getString(Constants.ENV_NAME));
-			}
-			return new HOTPlayer(formData.getString(Constants.PROJECT), bundle);
+
+			return new HOTPlayer(formData.getString(Constants.PROJECT),
+					formData.getString(Constants.HOTNAME),
+					formData.getString(Constants.ENV_CONTENT),
+					formData.getString(Constants.ENV_STACKNAME),
+					formData.getBoolean(Constants.DEL_EXIST),
+					formData.getBoolean(Constants.DEBUG));
 		}
 	}
 

@@ -43,20 +43,33 @@ public class HOTMapperUtils {
 	 * @return the bundle
 	 */
 	@SuppressWarnings("unchecked")
-	public static Bundle getBundleFromHOT(String hotName, String hot) {
+	public static Bundle getBundleFromHOT(
+			String stackName, String envStackName, String hotName, String envContent, String hot) {
 
-		Bundle stack = new Bundle(hotName, "", false, false);
+		Bundle stack = new Bundle(hotName, stackName, false, false);
 
+		stack.setEnvStackName(envStackName);
 		// Find paramaters or outputs in HOT
 		if (hot.contains(Constants.PARAMETERS)
 				|| hot.contains(Constants.OUTPUTS)) {
 			Map<String, Object> hotObjects = (Map<String, Object>) (new Yaml())
 					.load(hot);
 			if (hot.contains(Constants.PARAMETERS)) {
-				stack.setParameters(getParameters(hotObjects));
+				Map<String, Parameter> params = getParameters(hotObjects);
+				if (envContent != null && envContent.contains(Constants.PARAMETERS)) {
+					Map<String, String> envParams
+						= getParametersFromEnv((Map<String, Object>) (new Yaml()).load(envContent));
+					for (String key : params.keySet()) {
+						if (envParams.containsKey(key)) {
+							params.get(key).setValue(envParams.get(key));
+						}
+					}
+				}
+				stack.setParameters(params);
 			}
+
 			if (hot.contains(Constants.OUTPUTS)) {
-				stack.setOutputs(getOutputs(hotObjects));
+				stack.setOutputs(getOutputs(stackName, hotObjects));
 			}
 		}
 
@@ -80,6 +93,17 @@ public class HOTMapperUtils {
 		for (Entry<String, Object> entry : parameters.entrySet()) {
 			Map<String, Object> data = (Map<String, Object>) entry.getValue();
 			params.put(entry.getKey(), populateParameter(entry.getKey(), data));
+		}
+		return params;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Map<String, String>  getParametersFromEnv(Map<String, Object> envObjects) {
+		Map<String, String> params = new TreeMap<>();
+		Map<String, Object> parameters = (Map<String, Object>) envObjects
+				.get(Constants.PARAMETERS);
+		for (Entry<String, Object> entry : parameters.entrySet()) {
+			params.put(entry.getKey(), entry.getValue().toString());
 		}
 		return params;
 	}
@@ -132,7 +156,7 @@ public class HOTMapperUtils {
 	 * @return the list of outputs
 	 */
 	@SuppressWarnings("unchecked")
-	private static Map<String, Output> getOutputs(Map<String, Object> hotObjects) {
+	private static Map<String, Output> getOutputs(String stackName, Map<String, Object> hotObjects) {
 		Map<String, Output> exits = new TreeMap<String, Output>();
 		Map<String, Object> outputs = (Map<String, Object>) hotObjects
 				.get(Constants.OUTPUTS);
@@ -141,8 +165,22 @@ public class HOTMapperUtils {
 					entry.getKey(),
 					new Output(entry.getKey(),
 							(String) ((Map<String, Object>) entry.getValue())
-									.get(Constants.DESCRIPTION)));
+									.get(Constants.DESCRIPTION),
+							"$"  + stackName + "_" + entry.getKey()));
 		}
 		return exits;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static String getParameters(String hot) {
+		String result = "parameters:\n";
+		if (hot.contains(Constants.PARAMETERS)
+				|| hot.contains(Constants.OUTPUTS)) {
+			Map<String, Parameter> param = getParameters((Map<String, Object>)(new Yaml()).load(hot));
+			for (String p: param.keySet()) {
+				result += "  " + p + ": " + param.get(p).getDefaultValue() + "\n";
+			}
+		}
+		return result;
 	}
 }

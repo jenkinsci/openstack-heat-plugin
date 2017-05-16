@@ -95,6 +95,21 @@ public class EnvVarsUtils {
 
 	}
 
+	public void setEnv(final String key, final String value) {
+		String key1 = key;
+		if (key.startsWith("$")) {
+			key1 = key.substring(1);
+		}
+		this.cLog.logDebug(Messages.environment_output(key, value));
+		PublishEnvVar publish = new PublishEnvVar(key1, value);
+		this.build.addAction(publish);
+		publish.buildEnvVars(this.build, this.env);
+	}
+
+	public String getEnv(final String key) {
+		return this.env.get(key);
+	}
+
 	/**
 	 * 
 	 * Put $VARIBLE in context to be disponble at different step of the build
