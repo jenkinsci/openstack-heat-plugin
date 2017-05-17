@@ -64,5 +64,7 @@ public class Constants {
 	public final static String OUTPUT_VALUE = "output_value";
 	public final static String ENV_NAME = "envName";
 	public final static String STARTED = "started";
+	public final static String STACKNAME = "stackName";
+	public final static String STACKS_TO_DELETE = "stacks_to_delete";
 
 }

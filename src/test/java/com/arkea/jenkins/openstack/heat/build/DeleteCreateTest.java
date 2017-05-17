@@ -33,10 +33,15 @@ public class DeleteCreateTest extends AbstractStackTest {
 	public void testCreate() {
 		assertEquals(
 				true,
-				testPerform("deleteCreateDebug", "delete_create_complete",
-						Result.SUCCESS, true, true,
-						Arrays.asList("instance_ip", "192.168.1.19"),
-						"delete_create_complete.json"));
+				testPerform(
+						"deleteCreateDebug",
+						"delete_create_complete",
+						Result.SUCCESS,
+						true,
+						true,
+						Arrays.asList("instance_ip", "192.168.1.19",
+								"HOT Clean INFO : Stack deleted : delete_create_complete"),
+						"delete_create_complete.json", true));
 	}
 
 }

@@ -99,7 +99,7 @@
     		</f:invisibleEntry>
     	</j:when>
     	<j:otherwise>
-    		<j:set var="project" value="${instance.indexProject}"/>
+    		<j:set var="project" value="${instance.project}"/>
     		<f:entry name="Project" title="${%HOTPlayer.project.title}" field="project">
     			<select class="setting-input" name="project">
     				<j:forEach var="item" items="${descriptor.projects}">
