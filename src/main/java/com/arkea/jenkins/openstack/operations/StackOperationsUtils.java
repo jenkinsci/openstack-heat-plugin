@@ -115,7 +115,7 @@ public class StackOperationsUtils {
 		try {
 			cLog.logInfo(Messages.stack_start(bundleName,
 					projectOS.getProject()));
-
+			cLog.logInfo(bundle.getTags());
 			// Parameters for the stack
 			Map<String, String> vars = eVU.getVars(bundle.getParamsOS());
 			cLog.logDebugMap(Messages.stack_parameters(), vars);

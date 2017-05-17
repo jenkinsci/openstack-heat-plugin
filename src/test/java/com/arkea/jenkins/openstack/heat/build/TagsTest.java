@@ -35,7 +35,7 @@ public class TagsTest extends AbstractStackTest {
 		assertEquals(
 				true,
 				testPerform("createDebug", "create_complete","test",true,Result.SUCCESS,
-						false, true, Arrays.asList("instance_ip", "192.168.1.19"),
+						false, true, Arrays.asList("instance_ip", "192.168.1.19","test"),
 						"create_tags.json"));
 	}
 
