@@ -34,17 +34,34 @@ public class Bundle {
 	 */
 	private String hotName;
 	private String name;
+	private String tags;
 	private boolean exist;
 	private boolean debug;
+	private boolean tag;
 	private Map<String, Parameter> parameters = new TreeMap<String, Parameter>();
 	private Map<String, Output> outputs = new TreeMap<String, Output>();
 	private String envName;
-
+/*
 	public Bundle(String hotName, String name, boolean exist, boolean debug) {
 		this.hotName = hotName;
 		this.name = name;
 		this.exist = exist;
 		this.debug = debug;
+	}
+*/	
+	public Bundle(String hotName, String name, String tags,boolean tag,boolean exist, boolean debug) {
+		this.hotName = hotName;
+		this.name = name;
+		this.exist = exist;
+		this.debug = debug;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
 	}
 
 	public String getHotName() {
@@ -55,6 +72,14 @@ public class Bundle {
 		return name;
 	}
 
+	public void setTag(boolean tag){
+		this.tag = tag;
+	}
+	
+	public boolean isTag() {
+		return tag;
+	}
+	
 	public boolean isExist() {
 		return exist;
 	}

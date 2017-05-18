@@ -52,9 +52,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractStackTest extends AbstractTest {
 
-	protected boolean testPerform(String taskName, String stackName,
-			Result result, boolean delete, boolean debug,
-			List<String> testLogDebug, String jsonFileTest, boolean testClean) {
+	protected boolean testPerform(String taskName,
+			String stackName, String tags, boolean if_tag,Result result, boolean delete,
+			boolean debug, List<String> testLogDebug,
+			String jsonFileTest, boolean testClean) {
 
 		try {
 
@@ -71,7 +72,7 @@ public abstract class AbstractStackTest extends AbstractTest {
 					});
 
 			// Create the bundle to test
-			Bundle bundle = new Bundle("demo-template.yaml", stackName, delete,
+			Bundle bundle = new Bundle("demo-template.yaml", stackName, tags, if_tag, delete,
 					debug);
 			Map<String, Parameter> params = new HashMap<String, Parameter>();
 			params.put("NetID", new Parameter("NetID", Type.String, "", "", "",
@@ -100,7 +101,8 @@ public abstract class AbstractStackTest extends AbstractTest {
 
 			// Mock the create stack
 			Mockito.when(
-					clientOS.createStack(bundle.getName(), pathHot, bundle
+					clientOS.createStack(bundle.getName(), pathHot, bundle.getTags(),
+							bundle
 							.getParamsOS(), null, hPS.getTimersOS()
 							.getTimeoutProcessInMin())).thenAnswer(answerStack);
 
@@ -128,7 +130,7 @@ public abstract class AbstractStackTest extends AbstractTest {
 					}
 				}
 			}
-
+			
 			if (result.equals(build.getResult())) {
 				return true;
 			}
@@ -137,6 +139,14 @@ public abstract class AbstractStackTest extends AbstractTest {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	protected boolean testPerform(String taskName,
+			String stackName, Result result, boolean delete,
+			boolean debug, List<String> testLogDebug,
+			String jsonFileTest) {
+		
+		return testPerform(taskName,stackName,null,false,result,delete,debug,testLogDebug,jsonFileTest);
 	}
 
 	protected boolean testPerform(String taskName, String stackName,

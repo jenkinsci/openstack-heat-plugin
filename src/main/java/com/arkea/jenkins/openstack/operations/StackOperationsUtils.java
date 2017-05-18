@@ -115,7 +115,7 @@ public class StackOperationsUtils {
 		try {
 			cLog.logInfo(Messages.stack_start(bundleName,
 					projectOS.getProject()));
-
+			cLog.logInfo(bundle.getTags());
 			// Parameters for the stack
 			Map<String, String> vars = eVU.getVars(bundle.getParamsOS());
 			cLog.logDebugMap(Messages.stack_parameters(), vars);
@@ -130,10 +130,22 @@ public class StackOperationsUtils {
 			}
 
 			// Create the stack with the variables presents in the context
-			Stack stackCreate = client.createStack(bundleName,
+			Stack stackCreate;
+			if(bundle.isTag()&&!Strings.isNullOrEmpty(bundle.getTags())){
+					//with tags
+					stackCreate = client.createStack(bundleName,
 					loader.getFullPathHot(bundle.getHotName()),
+					bundle.getTags(), 
 					eVU.getVars(bundle.getParamsOS()), envFile,
 					timersOS.getTimeoutProcessInMin());
+			}else{
+					//without tags
+					stackCreate = client.createStack(bundleName,
+					loader.getFullPathHot(bundle.getHotName()),
+					null,
+					eVU.getVars(bundle.getParamsOS()), envFile,
+					timersOS.getTimeoutProcessInMin());
+			}
 
 			// Check the status of the creation ?
 			if (ProcessStatus.checkStackStatus(StackStatus.CREATE_COMPLETE,

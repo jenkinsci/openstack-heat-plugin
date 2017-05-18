@@ -17,6 +17,11 @@
  */
 function generateBundle(div, data, uid) {
 	var display = generateProperties(data, uid);
+	
+	if (data['tags'] !== undefined && isNotEmpty(data['tags'])) {
+		display += generateTags(data,uid);
+	}
+	
 	if (data['parameters'] !== undefined && isNotEmpty(data['parameters'])) {
 		display += generateParameters(data['parameters'], uid);
 	}
@@ -155,6 +160,40 @@ function generateParameters(params, uid) {
 	return inputs;
 }
 
+function generateTags(out,uid) {
+	
+	var outputs = '<table  width="100%"><tbody><tr><td colspan="3"><div class="section-header">Tags</div></td></tr>';
+	    outputs += '<tr class="optional-block-start row-set-start" >';
+		outputs += '<td  colspan="3">';
+		outputs += '<input name="tag" class="" onclick="javascript:updateOptionalBlock(this,true)"';
+		if (out["tag"] === true) {
+			outputs += ' checked ';
+		}
+		
+		outputs += 'onchange="updateBundle(\'\', this.name, this.checked, \''+ uid + '\')" '; 		
+		outputs += 'type="checkbox">';
+		outputs += '<label class="attach-previous">Add tags ?</label>';
+		outputs += '</td>';
+		outputs += '<td class="setting-no-help"></td>';
+		outputs += '</tr>';	    
+		outputs += '<tr class="rowvg-start" ></tr>';			
+		outputs += '<tr><td  class="setting-leftspace"></td><td class="setting-name">';
+		outputs += 'Tags';
+		outputs += ' : </td><td   class="setting-main"><input type="text"  class="setting-input" name="tags"';
+		
+		
+		outputs += ' title="tags" ';
+		if (out['tags'] !== '') {
+			outputs += ' value="' + out['tags'] + '" ';
+		}
+		outputs += ' onchange="updateBundle(\'\', this.name, this.value, \''
+				+ uid + '\')" ></input></td></tr>';
+		outputs += '<tr class="optional-block-end rowvg-end row-set-end"></tr>';
+	outputs += '</tbody></table>';
+	return outputs;
+}
+
+
 function generateOutputs(outs, uid) {
 	var output = undefined;
 	var outputs = '<table width="100%"><tbody><tr><td colspan="3"><div class="section-header">Outputs</div></td></tr>';
@@ -171,7 +210,7 @@ function generateOutputs(outs, uid) {
 		outputs += ' onchange="updateBundle(\'outputs\', this.name, this.value, \''
 				+ uid + '\')" ></input></td></tr>';
 	}
-	outputs += '</tbody></table>'
+	outputs += '</tbody></table>';
 	return outputs;
 }
 

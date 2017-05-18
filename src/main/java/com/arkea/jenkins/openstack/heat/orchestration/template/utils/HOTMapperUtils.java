@@ -45,7 +45,7 @@ public class HOTMapperUtils {
 	@SuppressWarnings("unchecked")
 	public static Bundle getBundleFromHOT(String hotName, String hot) {
 
-		Bundle stack = new Bundle(hotName, "", false, false);
+		Bundle stack = new Bundle(hotName, "","",false, false, false);
 
 		// Find paramaters or outputs in HOT
 		if (hot.contains(Constants.PARAMETERS)
@@ -57,6 +57,9 @@ public class HOTMapperUtils {
 			}
 			if (hot.contains(Constants.OUTPUTS)) {
 				stack.setOutputs(getOutputs(hotObjects));
+			}
+			if (hot.contains(Constants.TAGS)){
+				stack.setTags(getTags(hotObjects));
 			}
 		}
 
@@ -83,6 +86,22 @@ public class HOTMapperUtils {
 		}
 		return params;
 	}
+	
+	/**
+	 * Transform parameters from HOT to parameters in JAVA
+	 * 
+	 * @param hotObjects
+	 *            the objects parameters content in the HOT
+	 * @return the list of parameters
+	 */
+	@SuppressWarnings("unchecked")
+	private static String getTags(Map<String, Object> hotObjects){	
+		return (String)hotObjects.get(Constants.TAGS);
+	}	
+	
+	
+	
+	
 
 	/**
 	 * Create Paramater in JAVA

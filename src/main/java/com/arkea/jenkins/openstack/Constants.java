@@ -25,6 +25,8 @@ public class Constants {
 	public final static String BUNDLE = "bundle";
 	public final static String HOTNAME = "hotName";
 	public final static String NAME = "name";
+	public final static String TAGS = "tags";
+	public final static String TAG = "tag";
 	public final static String EXIST = "exist";
 	public final static String DEBUG = "debug";
 	public final static String TYPE = "type";
