@@ -32,9 +32,15 @@ public class CreateDebugTest extends AbstractStackTest {
 	public void testCreateDebug() {
 		assertEquals(
 				true,
-				testPerform("createDebug", "create_complete", Result.SUCCESS,
-						false, true, Arrays.asList("instance_ip", "192.168.1.19"),
-						"create_complete.json"));
+				testPerform(
+						"createDebug",
+						"create_complete",
+						Result.SUCCESS,
+						false,
+						true,
+						Arrays.asList("instance_ip", "192.168.1.19",
+								"HOT Clean INFO : Stack deleted : create_complete"),
+						"create_complete.json", true));
 	}
 
 }

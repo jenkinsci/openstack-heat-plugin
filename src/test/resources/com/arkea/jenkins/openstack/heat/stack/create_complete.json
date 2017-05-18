@@ -1,5 +1,7 @@
 [
 	{"id":"create_complete", "stack_name":"create_complete", "stack_status_reason": ""},
 	{"id":"create_complete", "stack_name":"create_complete", "stack_status_reason": "", "stack_status":"CREATE_COMPLETE"},
-	{"id":"create_complete", "stack_name":"create_complete", "stack_status_reason": "", "stack_status":"CREATE_COMPLETE", "outputs": [{"output_value": "192.168.1.19", "description": "IP address of the instance.", "output_key": "instance_ip"}]}	
+	{"id":"create_complete", "stack_name":"create_complete", "stack_status_reason": "", "stack_status":"CREATE_COMPLETE", "outputs": [{"output_value": "192.168.1.19", "description": "IP address of the instance.", "output_key": "instance_ip"}]},
+	{"id":"create_complete", "stack_name":"create_complete", "stack_status_reason": ""},
+	{"id":"create_complete", "stack_name":"create_complete", "stack_status_reason": "", "stack_status":"DELETE_COMPLETE"}
 ]

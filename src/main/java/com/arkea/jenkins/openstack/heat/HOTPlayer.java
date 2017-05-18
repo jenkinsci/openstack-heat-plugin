@@ -11,10 +11,12 @@ import hudson.tasks.Builder;
 import java.util.List;
 
 import jenkins.model.Jenkins;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -111,7 +113,7 @@ public class HOTPlayer extends Builder {
 
 		// Specific logger with color
 		ConsoleLogger cLog = new ConsoleLogger(listener.getLogger(),
-				"HOT Player", bundle.isDebug());
+				"HOT Player ", bundle.isDebug());
 		try {
 
 			// Variable in context
@@ -151,6 +153,20 @@ public class HOTPlayer extends Builder {
 						clientOS, cLog, hPS.getTimersOS())) {
 					return false;
 				}
+
+				// Push stack created to delete at the end if the task post
+				// build is activated and stack created succeed
+				JSONArray stacks = new JSONArray();
+				if (StringUtils.isNotEmpty(eVU
+						.getValue(Constants.STACKS_TO_DELETE))) {
+					stacks = JSONArray.fromObject(eVU
+							.getValue(Constants.STACKS_TO_DELETE));
+				}
+				stacks.add(new JSONObject().accumulate(Constants.PROJECT,
+						projectOS.toJSON()).accumulate(Constants.STACKNAME,
+						eVU.getVar(bundle.getName())));
+				eVU.setVar(Constants.STACKS_TO_DELETE, stacks.toString());
+
 			} else {
 				cLog.logError(Messages.project_notFound(project));
 				return false;
@@ -265,7 +281,9 @@ public class HOTPlayer extends Builder {
 			if (!bundle.getParameters().isEmpty()) {
 				ParameterUtils.checkContraints(bundle.getParameters());
 			}
-			if (!Strings.isNullOrEmpty(formData.getString(Constants.ENV_NAME))) {
+			if (formData.containsKey(Constants.ENV_NAME)
+					&& !Strings.isNullOrEmpty(formData
+							.getString(Constants.ENV_NAME))) {
 				bundle.setEnvName(formData.getString(Constants.ENV_NAME));
 			}
 			return new HOTPlayer(formData.getString(Constants.PROJECT), bundle);

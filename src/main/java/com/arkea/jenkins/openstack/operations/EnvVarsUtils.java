@@ -83,16 +83,14 @@ public class EnvVarsUtils {
 	}
 
 	/**
-	 * Tranfrom $VARIABLE in good value
+	 * Transform $VARIABLE in good value
 	 * 
 	 * @param toResolve
 	 *            variable to transform
-	 * @return varaible resolved
+	 * @return variable resolved
 	 */
 	public String getVar(String toResolve) {
-
 		return this.env.expand(Util.replaceMacro(toResolve, this.vr));
-
 	}
 
 	/**
@@ -116,11 +114,35 @@ public class EnvVarsUtils {
 						output.getValue(), outputs.get(entry.getKey())));
 				// Push the variable in the context without the $ in the
 				// name
-				PublishEnvVar publish = new PublishEnvVar(output.getValue()
-						.substring(1), outputs.get(entry.getKey()));
-				this.build.addAction(publish);
-				publish.buildEnvVars(this.build, this.env);
+				setVar(output.getValue().substring(1),
+						outputs.get(entry.getKey()));
 			}
 		}
 	}
+
+	/**
+	 * Put a couple name/value in the env variable map
+	 * 
+	 * @param name
+	 *            variable name
+	 * @param value
+	 *            value associated to the variable name
+	 */
+	public void setVar(String name, String value) {
+		PublishEnvVar publish = new PublishEnvVar(name, value);
+		this.build.addAction(publish);
+		publish.buildEnvVars(this.build, this.env);
+	}
+
+	/**
+	 * Retrieve value from $VARIABLE or classic name
+	 * 
+	 * @param key
+	 *            key to retrieve
+	 * @return value or emty
+	 */
+	public String getValue(String key) {
+		return this.env.get(this.env.expand(Util.replaceMacro(key, this.vr)));
+	}
+
 }

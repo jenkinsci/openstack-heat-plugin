@@ -75,6 +75,17 @@ public class ProjectOS implements Describable<ProjectOS> {
 
 	}
 
+	public ProjectOS(JSONObject project) {
+		this.project = project.getString(Constants.PROJECT);
+		this.url = project.getString(Constants.URL);
+		this.checkV3 = project.getBoolean(Constants.V3);
+		this.domain = project.getString(Constants.DOMAIN);
+		this.user = project.getString(Constants.USER);
+		this.password = Secret
+				.fromString(project.getString(Constants.PASSWORD));
+
+	}
+
 	public String getProject() {
 		return project;
 	}
@@ -231,5 +242,21 @@ public class ProjectOS implements Describable<ProjectOS> {
 						+ ExceptionUtils.getStackTrace(e));
 			}
 		}
+	}
+
+	/**
+	 * Format project into format json
+	 * 
+	 * @return project into json
+	 */
+	public JSONObject toJSON() {
+		return new JSONObject()
+				.accumulate(Constants.PROJECT, this.getProject())
+				.accumulate(Constants.URL, this.getUrl())
+				.accumulate(Constants.V3, this.isCheckV3())
+				.accumulate(Constants.DOMAIN, this.getDomain())
+				.accumulate(Constants.USER, this.getUser())
+				.accumulate(Constants.PASSWORD,
+						this.getPassword().getEncryptedValue());
 	}
 }

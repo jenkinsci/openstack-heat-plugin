@@ -16,10 +16,12 @@ import org.apache.commons.io.FileUtils;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.openstack4j.model.heat.Stack;
 import org.openstack4j.openstack.heat.domain.HeatStack;
 
 import com.arkea.jenkins.openstack.AbstractTest;
 import com.arkea.jenkins.openstack.client.OpenStack4jClient;
+import com.arkea.jenkins.openstack.heat.HOTClean;
 import com.arkea.jenkins.openstack.heat.HOTPlayer;
 import com.arkea.jenkins.openstack.heat.HOTPlayerSettings;
 import com.arkea.jenkins.openstack.heat.orchestration.template.Bundle;
@@ -53,12 +55,11 @@ public abstract class AbstractStackTest extends AbstractTest {
 	protected boolean testPerform(String taskName,
 			String stackName, String tags, boolean if_tag,Result result, boolean delete,
 			boolean debug, List<String> testLogDebug,
-			String jsonFileTest) {
+			String jsonFileTest, boolean testClean) {
 
 		try {
 
-			OpenStack4jClient clientOS = Mockito
-					.mock(OpenStack4jClient.class);
+			OpenStack4jClient clientOS = Mockito.mock(OpenStack4jClient.class);
 
 			// Configure the project and the hot file
 			String pathHot = getClass().getResource("/hot/demo-template.yaml")
@@ -92,8 +93,8 @@ public abstract class AbstractStackTest extends AbstractTest {
 			FreeStyleProject project = j.createFreeStyleProject(taskName);
 
 			// Global configuration
-			HOTPlayerSettings hPS = (HOTPlayerSettings) Jenkins
-					.getInstance().getDescriptor(HOTPlayerSettings.class);
+			HOTPlayerSettings hPS = (HOTPlayerSettings) Jenkins.getInstance()
+					.getDescriptor(HOTPlayerSettings.class);
 
 			// Mock isConnectionOK
 			Mockito.when(clientOS.isConnectionOK()).thenReturn(true);
@@ -105,10 +106,18 @@ public abstract class AbstractStackTest extends AbstractTest {
 							.getParamsOS(), null, hPS.getTimersOS()
 							.getTimeoutProcessInMin())).thenAnswer(answerStack);
 
+			if (testClean) {
+				// Mock the delete stack
+				Mockito.doNothing().when(clientOS)
+						.deleteStack(Mockito.any(Stack.class));
+			}
+
 			// Create task HotPlayer
-			HOTPlayer hotPlayer = new HOTPlayer("projectTest", bundle,
-					clientOS);
+			HOTPlayer hotPlayer = new HOTPlayer("projectTest", bundle, clientOS);
 			project.getBuildersList().add(hotPlayer);
+			if (testClean) {
+				project.getPublishersList().add(new HOTClean(clientOS));
+			}
 			project.save();
 
 			// Execute the test
@@ -138,6 +147,15 @@ public abstract class AbstractStackTest extends AbstractTest {
 			String jsonFileTest) {
 		
 		return testPerform(taskName,stackName,null,false,result,delete,debug,testLogDebug,jsonFileTest);
+	}
+
+	protected boolean testPerform(String taskName, String stackName,
+			Result result, boolean delete, boolean debug,
+			List<String> testLogDebug, String jsonFileTest) {
+
+		return testPerform(taskName, stackName, result, delete, debug,
+				testLogDebug, jsonFileTest, false);
+
 	}
 
 }
