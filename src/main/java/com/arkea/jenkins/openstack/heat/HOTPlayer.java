@@ -147,13 +147,13 @@ public class HOTPlayer extends Builder {
 						return false;
 					}
 				}
-				
+
 				// Create stack
 				if (!StackOperationsUtils.createStack(eVU, bundle, projectOS,
 						clientOS, cLog, hPS.getTimersOS())) {
 					return false;
 				}
-				
+
 				// Push stack created to delete at the end if the task post
 				// build is activated and stack created succeed
 				JSONArray stacks = new JSONArray();
@@ -281,7 +281,9 @@ public class HOTPlayer extends Builder {
 			if (!bundle.getParameters().isEmpty()) {
 				ParameterUtils.checkContraints(bundle.getParameters());
 			}
-			if (!Strings.isNullOrEmpty(formData.getString(Constants.ENV_NAME))) {
+			if (formData.containsKey(Constants.ENV_NAME)
+					&& !Strings.isNullOrEmpty(formData
+							.getString(Constants.ENV_NAME))) {
 				bundle.setEnvName(formData.getString(Constants.ENV_NAME));
 			}
 			return new HOTPlayer(formData.getString(Constants.PROJECT), bundle);
