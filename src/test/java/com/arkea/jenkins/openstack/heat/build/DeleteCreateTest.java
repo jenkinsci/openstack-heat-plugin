@@ -36,6 +36,8 @@ public class DeleteCreateTest extends AbstractStackTest {
 				testPerform(
 						"deleteCreateDebug",
 						"delete_create_complete",
+						"tag_delete_create_complete",
+						true,
 						Result.SUCCESS,
 						true,
 						true,

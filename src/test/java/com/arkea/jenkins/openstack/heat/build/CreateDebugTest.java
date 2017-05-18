@@ -35,6 +35,8 @@ public class CreateDebugTest extends AbstractStackTest {
 				testPerform(
 						"createDebug",
 						"create_complete",
+						"tag_create_complete",
+						true,
 						Result.SUCCESS,
 						false,
 						true,

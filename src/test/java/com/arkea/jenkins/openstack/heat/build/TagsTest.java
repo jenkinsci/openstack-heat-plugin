@@ -1,14 +1,12 @@
 package com.arkea.jenkins.openstack.heat.build;
 
 import static org.junit.Assert.assertEquals;
+import hudson.model.Result;
 
 import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.arkea.jenkins.openstack.heat.orchestration.template.Bundle;
-
-import hudson.model.Result;
 /**
  * @author Credit Mutuel Arkea
  * 
@@ -34,10 +32,10 @@ public class TagsTest extends AbstractStackTest {
 	public void testCreateDebug() {
 		assertEquals(
 				true,
-				testPerform("createDebug", "create_complete","test",true,Result.SUCCESS,
-						false, true, Arrays.asList("instance_ip", "192.168.1.19","test"),
-						"create_tags.json"));
+				testPerform("createDebug", "create_complete", "test", true,
+						Result.SUCCESS, false, true,
+						Arrays.asList("instance_ip", "192.168.1.19", "test"),
+						"create_tags.json", false));
 	}
 
 }
-
