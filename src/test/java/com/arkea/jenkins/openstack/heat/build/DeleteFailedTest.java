@@ -30,7 +30,7 @@ public class DeleteFailedTest extends AbstractStackTest {
 	public void testCreateFailed() {
 		assertEquals(
 				true,
-				testPerform("deleteFailed", "delete_failed",null,false, Result.FAILURE,
+				testPerform("deleteFailed", "delete_failed", Result.FAILURE,
 						true, false, null, "delete_failed.json"));
 	}
 

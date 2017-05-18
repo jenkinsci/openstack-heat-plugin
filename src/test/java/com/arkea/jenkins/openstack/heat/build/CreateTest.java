@@ -30,7 +30,7 @@ public class CreateTest extends AbstractStackTest {
 	public void testCreate() {
 		assertEquals(
 				true,
-				testPerform("create", "create_complete",null,false, Result.SUCCESS, false,
+				testPerform("create", "create_complete", Result.SUCCESS, false,
 						false, null, "create_complete.json"));
 	}
 

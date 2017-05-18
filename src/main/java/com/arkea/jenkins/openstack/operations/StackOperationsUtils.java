@@ -131,7 +131,7 @@ public class StackOperationsUtils {
 
 			// Create the stack with the variables presents in the context
 			Stack stackCreate;
-			if(!Strings.isNullOrEmpty(bundle.getTags())&&bundle.isTag()){
+			if(bundle.isTag()&&!Strings.isNullOrEmpty(bundle.getTags())){
 					//with tags
 					stackCreate = client.createStack(bundleName,
 					loader.getFullPathHot(bundle.getHotName()),
@@ -142,6 +142,7 @@ public class StackOperationsUtils {
 					//without tags
 					stackCreate = client.createStack(bundleName,
 					loader.getFullPathHot(bundle.getHotName()),
+					null,
 					eVU.getVars(bundle.getParamsOS()), envFile,
 					timersOS.getTimeoutProcessInMin());
 			}

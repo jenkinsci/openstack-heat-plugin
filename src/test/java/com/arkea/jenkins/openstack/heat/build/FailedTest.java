@@ -33,7 +33,7 @@ public class FailedTest extends AbstractStackTest {
 	public void testFailed() {
 		assertEquals(
 				true,
-				testPerform("createFailed", "failed",null,false, Result.FAILURE, false,
+				testPerform("createFailed", "failed", Result.FAILURE, false,
 						true, Arrays.asList("FAILED"), "failed.json"));
 	}
 }

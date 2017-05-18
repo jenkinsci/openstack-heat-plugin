@@ -100,7 +100,8 @@ public abstract class AbstractStackTest extends AbstractTest {
 
 			// Mock the create stack
 			Mockito.when(
-					clientOS.createStack(bundle.getName(), pathHot, bundle
+					clientOS.createStack(bundle.getName(), pathHot, bundle.getTags(),
+							bundle
 							.getParamsOS(), null, hPS.getTimersOS()
 							.getTimeoutProcessInMin())).thenAnswer(answerStack);
 
@@ -129,6 +130,14 @@ public abstract class AbstractStackTest extends AbstractTest {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	protected boolean testPerform(String taskName,
+			String stackName, Result result, boolean delete,
+			boolean debug, List<String> testLogDebug,
+			String jsonFileTest) {
+		
+		return testPerform(taskName,stackName,null,false,result,delete,debug,testLogDebug,jsonFileTest);
 	}
 
 }

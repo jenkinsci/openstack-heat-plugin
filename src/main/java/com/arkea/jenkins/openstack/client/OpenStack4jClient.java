@@ -83,6 +83,8 @@ public class OpenStack4jClient {
 	 *            name of the stack
 	 * @param fullName
 	 *            full name to acces template
+	 * @param tags
+	 *            tags for the stacks
 	 * @param params
 	 *            parameters associated
 	 * @param fullEnvFile
@@ -91,6 +93,7 @@ public class OpenStack4jClient {
 	 *            timeout to abort the creation
 	 * @return the stack created
 	 */
+	/*
 	public Stack createStack(String stackName, String fullName,
 			Map<String, String> params, String fullEnvFile, long timeout) {
 
@@ -107,13 +110,19 @@ public class OpenStack4jClient {
 		return getDetails(stackName, this.heatService.stacks().create(stack)
 				.getId());
 	}
+	*/
 
 	public Stack createStack(String stackName, String fullName,
 			String tags,
 			Map<String, String> params, String fullEnvFile, long timeout) {
-
-		StackCreateBuilder builder = Builders.stack().name(stackName)
+		StackCreateBuilder builder;
+		
+		if(!Strings.isNullOrEmpty(tags))
+				builder = Builders.stack().name(stackName)
 				.tags(tags)
+				.parameters(params).templateFromFile(fullName)
+				.disableRollback(false).timeoutMins((long) timeout);
+		else 	builder = Builders.stack().name(stackName)
 				.parameters(params).templateFromFile(fullName)
 				.disableRollback(false).timeoutMins((long) timeout);
 

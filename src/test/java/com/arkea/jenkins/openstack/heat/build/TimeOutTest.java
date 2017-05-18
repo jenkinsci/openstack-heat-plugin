@@ -32,7 +32,7 @@ public class TimeOutTest extends AbstractStackTest {
 	public void testFailed() {
 		assertEquals(
 				true,
-				testPerform("createTimeout", "timeout",null,false, Result.FAILURE, false,
+				testPerform("createTimeout", "timeout", Result.FAILURE, false,
 						true, Arrays.asList("TIMEOUT"), "timeout.json"));
 	}
 }
