@@ -49,10 +49,11 @@ public class ProjectOS implements Describable<ProjectOS> {
 	private String domain;
 	private String user;
 	private Secret password;
+	private String region;
 
 	@DataBoundConstructor
 	public ProjectOS(String project, String url, JSONObject v3, String user,
-			Secret password) {
+			Secret password, String region) {
 		this.project = project;
 		this.url = url;
 		if (v3 != null) {
@@ -61,18 +62,19 @@ public class ProjectOS implements Describable<ProjectOS> {
 		}
 		this.user = user;
 		this.password = password;
+		this.region = region;
 
 	}
 
 	public ProjectOS(String project, String url, boolean checkV3,
-			String domain, String user, Secret password) {
+			String domain, String user, Secret password, String region) {
 		this.project = project;
 		this.url = url;
 		this.checkV3 = checkV3;
 		this.domain = domain;
 		this.user = user;
 		this.password = password;
-
+		this.region = region;
 	}
 
 	public ProjectOS(JSONObject project) {
@@ -83,6 +85,7 @@ public class ProjectOS implements Describable<ProjectOS> {
 		this.user = project.getString(Constants.USER);
 		this.password = Secret
 				.fromString(project.getString(Constants.PASSWORD));
+		this.region = project.getString(Constants.REGION);
 
 	}
 
@@ -132,6 +135,14 @@ public class ProjectOS implements Describable<ProjectOS> {
 
 	public void setPassword(Secret password) {
 		this.password = password;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
 	}
 
 	/**
@@ -191,6 +202,8 @@ public class ProjectOS implements Describable<ProjectOS> {
 		 *            user
 		 * @param password
 		 *            password
+		 * @param region
+		 *            region
 		 * @return FormValidation for the result
 		 * @throws FormException
 		 *             if the validation fails
@@ -201,7 +214,8 @@ public class ProjectOS implements Describable<ProjectOS> {
 				@QueryParameter(Constants.V3) boolean v3,
 				@QueryParameter(Constants.DOMAIN) String domain,
 				@QueryParameter(Constants.USER) String user,
-				@QueryParameter(Constants.PASSWORD) Secret password)
+				@QueryParameter(Constants.PASSWORD) Secret password,
+				@QueryParameter(Constants.REGION) String region)
 				throws FormException {
 			try {
 
@@ -228,7 +242,7 @@ public class ProjectOS implements Describable<ProjectOS> {
 					return FormValidation.warning(msg.toString());
 				}
 				OpenStack4jClient client = new OpenStack4jClient(new ProjectOS(
-						project, url, v3, domain, user, password));
+						project, url, v3, domain, user, password, region));
 				if (client.isConnectionOK()) {
 					return FormValidation.ok(Messages.formValidation_success());
 				} else {
@@ -257,6 +271,7 @@ public class ProjectOS implements Describable<ProjectOS> {
 				.accumulate(Constants.DOMAIN, this.getDomain())
 				.accumulate(Constants.USER, this.getUser())
 				.accumulate(Constants.PASSWORD,
-						this.getPassword().getEncryptedValue());
+						this.getPassword().getEncryptedValue())
+				.accumulate(Constants.REGION, region);
 	}
 }

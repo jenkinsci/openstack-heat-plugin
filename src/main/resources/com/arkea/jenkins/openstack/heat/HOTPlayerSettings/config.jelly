@@ -47,6 +47,9 @@
 	      		<f:entry title="${%HOTPlayerSettings.password.title}" field="password" description="${%HOTPlayerSettings.password.description}">
 	        		<f:password />
 	      		</f:entry>
+	      		<f:entry title="${%HOTPlayerSettings.region.title}" field="region" description="${%HOTPlayerSettings.region.description}">
+	        		<f:textbox />
+	      		</f:entry>
 	      		<f:validateButton title="${%HOTPlayerSettings.test.title}" progress="${%HOTPlayerSettings.test.progress}" method="testConnection" with="project,url,v3,domain,user,password" />
 	      		<f:entry title="">
 					<div align="right">

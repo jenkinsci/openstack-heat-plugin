@@ -86,6 +86,8 @@ public class HOTPlayerSettingsLabelsTest extends AbstractTest {
 				html.contains("User OpenStack"));
 		assertTrue("Password OpenStack is present ?",
 				html.contains("Password OpenStack"));
+		assertTrue("Region OpenStack is present ?",
+				html.contains("Region (optional)"));
 
 		// Test OpenStack Time Configuration
 		assertTrue("Polling Status OpenStack (s) is present ?",

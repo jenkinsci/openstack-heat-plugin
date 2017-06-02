@@ -49,6 +49,7 @@ public abstract class AbstractTest {
 		form.getInputByName("_.domain").setValueAttribute("default");
 		form.getInputByName("_.user").setValueAttribute("test");
 		form.getInputByName("_.password").setValueAttribute("******");
+		form.getInputByName("_.region").setValueAttribute("region");
 
 		form.getInputByName("_.pollingStatus").setValueAttribute("1");
 		form.getInputByName("_.timeoutProcess").setValueAttribute("600");

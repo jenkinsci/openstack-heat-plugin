@@ -67,6 +67,7 @@ public class HOTPlayerSettingsMultiTenantsTest extends AbstractTest {
 		domains = form.getInputsByName("_.domain");
 		users = form.getInputsByName("_.user");
 		passwords = form.getInputsByName("_.password");
+		List<HtmlInput> regions = form.getInputsByName("_.region");
 		assertEquals("projectTest", projects.get(0).getValueAttribute());
 		assertEquals("projectTest2", projects.get(1).getValueAttribute());
 		assertEquals("http://openstack.com", urls.get(0).getValueAttribute());
@@ -81,6 +82,10 @@ public class HOTPlayerSettingsMultiTenantsTest extends AbstractTest {
 				!Strings.isNullOrEmpty(passwords.get(0).getValueAttribute()));
 		assertTrue("Password is not null ?",
 				!Strings.isNullOrEmpty(passwords.get(1).getValueAttribute()));
+		assertTrue("Region is not null ?",
+				!Strings.isNullOrEmpty(regions.get(0).getValueAttribute()));
+		assertTrue("Region is null ?",
+				Strings.isNullOrEmpty(regions.get(1).getValueAttribute()));
 
 	}
 }

@@ -70,8 +70,12 @@ public class OpenStack4jClient {
 							projectOS.getPassword().getPlainText())
 					.tenantName(projectOS.getProject()).authenticate();
 		}
-		this.heatService = osClient.heat();
 
+		if (Strings.isNullOrEmpty(projectOS.getRegion())) {
+			this.heatService = osClient.heat();
+		} else {
+			this.heatService = osClient.useRegion(projectOS.getRegion()).heat();
+		}
 	}
 
 	public List<? extends Stack> getStacks() {
@@ -94,37 +98,36 @@ public class OpenStack4jClient {
 	 * @return the stack created
 	 */
 	/*
-	public Stack createStack(String stackName, String fullName,
-			Map<String, String> params, String fullEnvFile, long timeout) {
+	 * public Stack createStack(String stackName, String fullName,
+	 * Map<String, String> params, String fullEnvFile, long timeout) {
+	 * 
+	 * StackCreateBuilder builder = Builders.stack().name(stackName)
+	 * .parameters(params).templateFromFile(fullName)
+	 * .disableRollback(false).timeoutMins((long) timeout);
+	 * 
+	 * if (!Strings.isNullOrEmpty(fullEnvFile)) {
+	 * builder.environmentFromFile(fullEnvFile);
+	 * }
+	 * 
+	 * HeatStackCreate stack = (HeatStackCreate) builder.build();
+	 * 
+	 * return getDetails(stackName, this.heatService.stacks().create(stack)
+	 * .getId());
+	 * }
+	 */
 
-		StackCreateBuilder builder = Builders.stack().name(stackName)
-				.parameters(params).templateFromFile(fullName)
-				.disableRollback(false).timeoutMins((long) timeout);
-
-		if (!Strings.isNullOrEmpty(fullEnvFile)) {
-			builder.environmentFromFile(fullEnvFile);
-		}
-
-		HeatStackCreate stack = (HeatStackCreate) builder.build();
-
-		return getDetails(stackName, this.heatService.stacks().create(stack)
-				.getId());
-	}
-	*/
-
-	public Stack createStack(String stackName, String fullName,
-			String tags,
+	public Stack createStack(String stackName, String fullName, String tags,
 			Map<String, String> params, String fullEnvFile, long timeout) {
 		StackCreateBuilder builder;
-		
-		if(!Strings.isNullOrEmpty(tags))
-				builder = Builders.stack().name(stackName)
-				.tags(tags)
-				.parameters(params).templateFromFile(fullName)
-				.disableRollback(false).timeoutMins((long) timeout);
-		else 	builder = Builders.stack().name(stackName)
-				.parameters(params).templateFromFile(fullName)
-				.disableRollback(false).timeoutMins((long) timeout);
+
+		if (!Strings.isNullOrEmpty(tags))
+			builder = Builders.stack().name(stackName).tags(tags)
+					.parameters(params).templateFromFile(fullName)
+					.disableRollback(false).timeoutMins((long) timeout);
+		else
+			builder = Builders.stack().name(stackName).parameters(params)
+					.templateFromFile(fullName).disableRollback(false)
+					.timeoutMins((long) timeout);
 
 		if (!Strings.isNullOrEmpty(fullEnvFile)) {
 			builder.environmentFromFile(fullEnvFile);
@@ -135,8 +138,7 @@ public class OpenStack4jClient {
 		return getDetails(stackName, this.heatService.stacks().create(stack)
 				.getId());
 	}
-	
-	
+
 	public Stack getStackByName(String stackName) {
 		return this.heatService.stacks().getStackByName(stackName);
 	}

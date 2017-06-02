@@ -55,6 +55,7 @@ public class Constants {
 	public final static String V3 = "v3";
 	public final static String USER = "user";
 	public final static String PASSWORD = "password";
+	public final static String REGION = "region";
 	public final static String PATH_HOT = "pathHot";
 	public final static String PATH_ENV = "pathEnv";
 	public final static String EXT_HOT = "extHot";

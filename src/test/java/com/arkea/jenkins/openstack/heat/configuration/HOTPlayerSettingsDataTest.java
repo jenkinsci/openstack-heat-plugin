@@ -81,7 +81,7 @@ public class HOTPlayerSettingsDataTest extends AbstractTest {
 		// Test Project setting
 		CheckDataUtils
 				.checkFormException(hPS, "Project(Tenant) configurations");
-		ProjectOS projectOS = new ProjectOS("", "", false, "", "", null);
+		ProjectOS projectOS = new ProjectOS("", "", false, "", "", null, "");
 		hPS.setProjects(Arrays.asList(projectOS));
 		CheckDataUtils.checkFormException(hPS, "project");
 		projectOS.setProject("project");
@@ -141,7 +141,8 @@ public class HOTPlayerSettingsDataTest extends AbstractTest {
 		assertEquals("test", form.getInputByName("_.user").getValueAttribute());
 		assertTrue("Password is not null ?", !Strings.isNullOrEmpty(form
 				.getInputByName("_.password").getValueAttribute()));
-
+		assertEquals("region", form.getInputByName("_.region").getValueAttribute());
+		
 		assertEquals("1", form.getInputByName("_.pollingStatus")
 				.getValueAttribute());
 		assertEquals("600", form.getInputByName("_.timeoutProcess")
