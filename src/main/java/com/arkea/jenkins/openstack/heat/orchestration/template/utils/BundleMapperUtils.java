@@ -1,5 +1,6 @@
 package com.arkea.jenkins.openstack.heat.orchestration.template.utils;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -11,6 +12,8 @@ import com.arkea.jenkins.openstack.heat.orchestration.template.Bundle;
 import com.arkea.jenkins.openstack.heat.orchestration.template.Output;
 import com.arkea.jenkins.openstack.heat.orchestration.template.Parameter;
 import com.arkea.jenkins.openstack.heat.orchestration.template.constraints.ConstraintUtils;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * @author Credit Mutuel Arkea
@@ -36,22 +39,21 @@ import com.arkea.jenkins.openstack.heat.orchestration.template.constraints.Const
 public class BundleMapperUtils {
 
 	@SuppressWarnings("unchecked")
-	public static Bundle getBundleFromJson(String data) {
+	public static Bundle getBundleFromJson(String data)
+			throws JsonParseException, JsonMappingException, IOException {
 
 		JSONObject json = JSONObject.fromObject(data);
 
 		// Properties globals
 		Bundle bundle = new Bundle(json.getString(Constants.HOTNAME),
-				json.getString(Constants.NAME),
-				json.getString(Constants.TAGS),
+				json.getString(Constants.NAME), json.getString(Constants.TAGS),
 				json.getBoolean(Constants.TAG),
 				json.getBoolean(Constants.EXIST),
 				json.getBoolean(Constants.DEBUG));
 
 		bundle.setTags(json.getString(Constants.TAGS));
 		bundle.setTag(json.getBoolean(Constants.TAG));
-		
-		
+
 		// Parameters
 		Map<String, Parameter> params = new TreeMap<String, Parameter>();
 		Map<String, Object> parameters = json

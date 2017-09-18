@@ -8,6 +8,7 @@ import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 
+import java.io.IOException;
 import java.util.List;
 
 import jenkins.model.Jenkins;
@@ -277,14 +278,21 @@ public class HOTPlayer extends Builder {
 						Messages.bundle_configurationException(),
 						"ConfigurationException");
 			}
-			Bundle bundle = BundleMapperUtils.getBundleFromJson(data);
-			if (!bundle.getParameters().isEmpty()) {
-				ParameterUtils.checkContraints(bundle.getParameters());
-			}
-			if (formData.containsKey(Constants.ENV_NAME)
-					&& !Strings.isNullOrEmpty(formData
-							.getString(Constants.ENV_NAME))) {
-				bundle.setEnvName(formData.getString(Constants.ENV_NAME));
+			Bundle bundle;
+			try {
+				bundle = BundleMapperUtils.getBundleFromJson(data);
+				if (!bundle.getParameters().isEmpty()) {
+					ParameterUtils.checkContraints(bundle.getParameters());
+				}
+				if (formData.containsKey(Constants.ENV_NAME)
+						&& !Strings.isNullOrEmpty(formData
+								.getString(Constants.ENV_NAME))) {
+					bundle.setEnvName(formData.getString(Constants.ENV_NAME));
+				}
+			} catch (IOException e) {
+				throw new FormException(
+						Messages.bundle_constraintsException(),
+						"ConstraintsException");
 			}
 			return new HOTPlayer(formData.getString(Constants.PROJECT), bundle);
 		}

@@ -1,5 +1,6 @@
 package com.arkea.jenkins.openstack.heat.orchestration.template.constraints;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.arkea.jenkins.openstack.Constants;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author Credit Mutuel Arkea
@@ -132,44 +137,67 @@ public class ConstraintUtils {
 	 *            the constraints list JSON structure
 	 * @return
 	 *         the equivalent constraints JAVA map
+	 * @throws IOException
+	 *             convert map error
+	 * @throws JsonMappingException
+	 *             convert map error
+	 * @throws JsonParseException
+	 *             convert map error
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<String, AbstractConstraint> getContraintsFromJSONParameter(
-			Map<String, Object> properties) {
+			Map<String, Object> properties) throws JsonParseException,
+			JsonMappingException, IOException {
 		Map<String, AbstractConstraint> constraints = new HashMap<String, AbstractConstraint>();
 
 		if (properties.get(Constants.CONSTRAINTS) != null
-				&& !"null".equals(properties.get(Constants.CONSTRAINTS).toString())) {
+				&& !"null".equals(properties.get(Constants.CONSTRAINTS)
+						.toString())) {
 			Map<String, Map<String, Object>> cons = (Map<String, Map<String, Object>>) properties
 					.get(Constants.CONSTRAINTS);
+			final ObjectMapper objMap = new ObjectMapper();
 			for (Entry<String, Map<String, Object>> entry : cons.entrySet()) {
 				switch (entry.getKey()) {
 				case Constants.CONSTRAINT_ALLOWED_PATTERN:
 					AllowedPatternConstraint apc = new AllowedPatternConstraint(
-							(String) entry.getValue().get(Constants.CONSTRAINT_ALLOWED_PATTERN));
+							(String) entry.getValue().get(
+									Constants.CONSTRAINT_ALLOWED_PATTERN));
 					apc.setDescription((String) entry.getValue().get(
 							Constants.DESCRIPTION));
 					constraints.put(entry.getKey(), apc);
 					break;
 				case Constants.CONSTRAINT_ALLOWED_VALUES:
 					AllowedValuesConstraint avc = new AllowedValuesConstraint(
-							(Map<String, String>) entry.getValue().get(
-									Constants.CONSTRAINT_ALLOWED_VALUES));
+							(Map<String, String>) objMap
+									.readValue(
+											entry.getValue()
+													.get(Constants.CONSTRAINT_ALLOWED_VALUES)
+													.toString(),
+											new TypeReference<Map<String, String>>() {
+											}));
 					avc.setDescription((String) entry.getValue().get(
 							Constants.DESCRIPTION));
 					constraints.put(entry.getKey(), avc);
 					break;
 				case Constants.CONSTRAINT_LENGTH:
 					LengthConstraint lc = new LengthConstraint(
-							(Map<String, Integer>) entry.getValue().get(
-									Constants.LIMITS), (String) entry.getValue().get(
+							(Map<String, Integer>) objMap.readValue(entry
+									.getValue().get(Constants.LIMITS)
+									.toString(),
+									new TypeReference<Map<String, Integer>>() {
+									}), (String) entry.getValue().get(
 									Constants.DESCRIPTION));
 					constraints.put(entry.getKey(), lc);
 					break;
 				case Constants.CONSTRAINT_RANGE:
-					RangeConstraint rc = new RangeConstraint(
-							(Map<String, Double>) entry.getValue().get(Constants.LIMITS),
-							(String) entry.getValue().get(Constants.DESCRIPTION));
+					RangeConstraint rc;
+					rc = new RangeConstraint(
+							(Map<String, Double>) objMap.readValue(entry
+									.getValue().get(Constants.LIMITS)
+									.toString(),
+									new TypeReference<Map<String, Double>>() {
+									}), (String) entry.getValue().get(
+									Constants.DESCRIPTION));
 					constraints.put(entry.getKey(), rc);
 					break;
 				case Constants.CONSTRAINT_CUSTOM_CONSTRAINT:
