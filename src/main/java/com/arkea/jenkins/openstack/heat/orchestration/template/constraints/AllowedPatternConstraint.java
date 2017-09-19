@@ -52,8 +52,8 @@ public class AllowedPatternConstraint extends AbstractConstraint {
 		Pattern p = Pattern.compile(allowed_pattern);
 		if (!Strings.isNullOrEmpty(parameter.getValue())) {
 			return p.matcher(parameter.getValue()).matches();
-		} else if (!Strings.isNullOrEmpty((String) parameter.getDefaultValue())) {
-			return p.matcher((String) parameter.getDefaultValue()).matches();
+		} else if (!Strings.isNullOrEmpty(String.valueOf(parameter.getDefaultValue()))) {
+			return p.matcher(String.valueOf(parameter.getDefaultValue())).matches();
 		} else {
 			return false;
 		}

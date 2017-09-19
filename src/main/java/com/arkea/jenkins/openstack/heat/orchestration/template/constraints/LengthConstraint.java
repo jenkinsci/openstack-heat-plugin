@@ -52,8 +52,8 @@ public class LengthConstraint extends AbstractConstraint {
 
 	@Override
 	public boolean checkConstraint(Parameter parameter) {
-		int length = parameter.getValue().length() == 0 ? ((String) parameter
-				.getDefaultValue()).length() : parameter.getValue().length();
+		int length = parameter.getValue().length() == 0 ? (String.valueOf(parameter
+				.getDefaultValue())).length() : parameter.getValue().length();
 		if (limits.containsKey(Constants.MIN)
 				&& length < limits.get(Constants.MIN)) {
 			return false;

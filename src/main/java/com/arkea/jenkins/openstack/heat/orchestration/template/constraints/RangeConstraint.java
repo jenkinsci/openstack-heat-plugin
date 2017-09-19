@@ -56,8 +56,9 @@ public class RangeConstraint extends AbstractConstraint {
 		double value = 0;
 		if (!Strings.isNullOrEmpty(parameter.getValue())) {
 			value = Double.valueOf(parameter.getValue());
-		} else if (!Strings.isNullOrEmpty((String) parameter.getDefaultValue())) {
-			value = Double.valueOf((String) parameter.getDefaultValue());
+		} else if (!Strings.isNullOrEmpty(String.valueOf(parameter
+				.getDefaultValue()))) {
+			value = Double.valueOf(String.valueOf(parameter.getDefaultValue()));
 		}
 		boolean rtn = true;
 		if (this.limits.containsKey(Constants.MIN)
