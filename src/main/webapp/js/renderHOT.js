@@ -97,7 +97,12 @@ function generateParameters(params, uid) {
 			for ( var element in param["constraints"]) {
 				var constraint = param["constraints"][element];
 				if (constraint["type"] == "allowed_values") {
-					var selectedVal = param["value"];
+					var selectedVal = "";
+					if (param["value"] !== '') {
+						selectedVal = param["value"];
+					} else if (param["defaultValue"] !== '') {
+						selectedVal = param["defaultValue"];
+					}
 					field = '<select name="' + parameter + '" ';
 					field += ' id="' + parameter + '"';
 					if (param["description"] !== '') {
@@ -227,9 +232,9 @@ function updateBundle(family, name, value, uid) {
 function checkConstraints(field) {
 	var length = field.value.length;
 	var error = '';
-	if (field.min != undefined && length < field.min) {
+	if (field.min != undefined && field.min !='' && length < field.min) {
 		error += ' Length field < ' + field.min + ' !';
-	} else if (field.max != undefined && length > field.max) {
+	} else if (field.max != undefined && field.max !='' && length > field.max) {
 		error += ' Length field > ' + field.max + ' !';
 	} else if (field.pattern != undefined && field.pattern != '') {
 		var regex = new RegExp(pattern, "g");
