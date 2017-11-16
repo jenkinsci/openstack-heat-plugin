@@ -14,7 +14,7 @@
 	</properties>
 	<groupId>org.jenkins-ci.plugins</groupId>
 	<artifactId>openstack-heat</artifactId>
-	<version>1.5-SNAPSHOT</version>
+	<version>1.6-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	<name>Openstack Heat Plugin</name>
 	<url>https://wiki.jenkins-ci.org/display/JENKINS/Openstack+Heat+Plugin</url>
